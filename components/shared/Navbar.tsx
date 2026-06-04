@@ -329,69 +329,70 @@ function MobileThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useStateHook(false)
   useEffectHook(() => setMounted(true), [])
-  const isDark = resolvedTheme === 'dark'
+  const isDark = mounted && resolvedTheme === 'dark'
 
   return (
     <div style={{
-      borderTop: '1px solid color-mix(in srgb, var(--text-primary) 15%, transparent)',
-      paddingTop: '1.5rem',
+      borderTop: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
+      paddingTop: '1.25rem',
+      marginTop: 'auto',
     }}>
-      <p style={{
-        margin: '0 0 0.75rem',
-        fontSize: '0.75rem',
-        fontWeight: 600,
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-        color: 'color-mix(in srgb, var(--text-primary) 50%, transparent)',
-      }}>Appearance</p>
-      <button
-        onClick={() => setTheme(isDark ? 'light' : 'dark')}
-        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-        disabled={!mounted}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          background: 'color-mix(in srgb, var(--text-primary) 8%, transparent)',
-          border: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
-          borderRadius: '999px',
-          padding: '0.5rem 0.75rem',
-          cursor: 'pointer',
-          width: '100%',
-          transition: 'background 0.2s ease',
-        }}
-      >
-        {/* Track */}
+      {/* Editorial two-option toggle — matches staggered menu typographic style */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+        <button
+          onClick={() => setTheme('light')}
+          aria-label="Switch to light mode"
+          disabled={!mounted}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
+            letterSpacing: '-1.5px',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            color: !isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
+            transition: 'color 0.25s ease, opacity 0.25s ease',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Light
+        </button>
+
         <span style={{
-          position: 'relative',
-          display: 'inline-flex',
-          alignItems: 'center',
-          width: '44px',
-          height: '24px',
-          borderRadius: '999px',
-          background: mounted && isDark
-            ? 'linear-gradient(135deg, #3dd6ff, #1a6aff)'
-            : 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-          transition: 'background 0.35s ease',
-          flexShrink: 0,
+          fontWeight: 300,
+          fontSize: '1.1rem',
+          color: 'color-mix(in srgb, var(--text-primary) 20%, transparent)',
+          lineHeight: 1,
+          userSelect: 'none',
         }}>
-          <span style={{
-            position: 'absolute',
-            left: mounted && isDark ? '22px' : '2px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: '#fff',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
-            transition: 'left 0.3s cubic-bezier(0.34,1.56,0.64,1)',
-          }} />
+          /
         </span>
-        {/* Label + icon */}
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-          {mounted && isDark ? <Moon size={15} /> : <Sun size={15} />}
-          {mounted ? (isDark ? 'Dark Mode' : 'Light Mode') : 'Loading...'}
-        </span>
-      </button>
+
+        <button
+          onClick={() => setTheme('dark')}
+          aria-label="Switch to dark mode"
+          disabled={!mounted}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
+            letterSpacing: '-1.5px',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            color: isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
+            transition: 'color 0.25s ease, opacity 0.25s ease',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Dark
+        </button>
+      </div>
     </div>
   )
 }
