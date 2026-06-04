@@ -34,6 +34,8 @@ export interface StaggeredMenuProps {
   showLogo?: boolean
   /** Renders the toggle as a solid white circle with 2 horizontal bars instead of the text+plus button */
   circleButton?: boolean
+  /** Optional node rendered at the bottom of the panel (e.g. a theme toggle) */
+  themeToggle?: React.ReactNode
 }
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
@@ -55,6 +57,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   onMenuClose,
   showLogo = true,
   circleButton = false,
+  themeToggle,
 }: StaggeredMenuProps) => {
   const [open, setOpen] = useState(false)
   const openRef = useRef(false)
@@ -413,6 +416,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {themeToggle && (
+              <div className="sm-theme-toggle mt-auto pt-6">
+                {themeToggle}
               </div>
             )}
           </div>

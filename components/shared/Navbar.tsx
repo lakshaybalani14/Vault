@@ -8,6 +8,7 @@ import { Bell, ClipboardList, LogOut, Moon, Sun, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { logoutUser } from '@/lib/actions/auth'
 import StaggeredMenu from '@/components/shared/StaggeredMenu'
+import { useEffect as useEffectHook, useState as useStateHook } from 'react'
 
 export type PillNavItem = {
   label: string
@@ -299,6 +300,7 @@ export default function Navbar({ userName = 'User', userEmail = '', unreadCount 
               openMenuButtonColor="var(--accent)"
               displaySocials={false}
               circleButton
+              themeToggle={<MobileThemeToggle />}
               items={[
                 { label: 'Feed', ariaLabel: 'Feed', link: '/feed' },
                 { label: 'Post Item', ariaLabel: 'Post Item', link: '/post/new' },
@@ -320,5 +322,76 @@ function DropdownItem({ icon, label, onClick, danger }: { icon: React.ReactNode;
       {icon}
       {label}
     </button>
+  )
+}
+
+function MobileThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useStateHook(false)
+  useEffectHook(() => setMounted(true), [])
+  const isDark = resolvedTheme === 'dark'
+
+  return (
+    <div style={{
+      borderTop: '1px solid color-mix(in srgb, var(--text-primary) 15%, transparent)',
+      paddingTop: '1.5rem',
+    }}>
+      <p style={{
+        margin: '0 0 0.75rem',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        color: 'color-mix(in srgb, var(--text-primary) 50%, transparent)',
+      }}>Appearance</p>
+      <button
+        onClick={() => setTheme(isDark ? 'light' : 'dark')}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        disabled={!mounted}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          background: 'color-mix(in srgb, var(--text-primary) 8%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
+          borderRadius: '999px',
+          padding: '0.5rem 0.75rem',
+          cursor: 'pointer',
+          width: '100%',
+          transition: 'background 0.2s ease',
+        }}
+      >
+        {/* Track */}
+        <span style={{
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          width: '44px',
+          height: '24px',
+          borderRadius: '999px',
+          background: mounted && isDark
+            ? 'linear-gradient(135deg, #3dd6ff, #1a6aff)'
+            : 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+          transition: 'background 0.35s ease',
+          flexShrink: 0,
+        }}>
+          <span style={{
+            position: 'absolute',
+            left: mounted && isDark ? '22px' : '2px',
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            background: '#fff',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+            transition: 'left 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+          }} />
+        </span>
+        {/* Label + icon */}
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
+          {mounted && isDark ? <Moon size={15} /> : <Sun size={15} />}
+          {mounted ? (isDark ? 'Dark Mode' : 'Light Mode') : 'Loading...'}
+        </span>
+      </button>
+    </div>
   )
 }
