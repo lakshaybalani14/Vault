@@ -2,13 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { loginUser } from '@/lib/actions/auth'
-import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const router = useRouter()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -20,15 +18,13 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
+    // loginUser redirects server-side on success; only returns on error
     const result = await loginUser({ email, password })
-    if (result.error) {
+    if (result?.error) {
       setError(result.error)
       setLoading(false)
-    } else {
-      toast.success('Welcome back!')
-      router.push('/feed')
-      router.refresh()
     }
+    // No else needed — successful login triggers a server-side redirect to /feed
   }
 
   return (
@@ -46,14 +42,17 @@ export default function LoginPage() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h1 style={{
-            fontSize: '2rem',
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-            color: 'var(--text-primary)',
-          }}>
-            Vault
-          </h1>
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <h1 style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+            }}>
+              Vault
+            </h1>
+          </Link>
           <p style={{
             fontSize: '0.875rem',
             color: 'var(--text-secondary)',

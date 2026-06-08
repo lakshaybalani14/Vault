@@ -7,6 +7,7 @@ import { getPost } from '@/lib/actions/posts'
 import { getCurrentUser } from '@/lib/actions/auth'
 import { formatRelativeTime, getCategoryEmoji } from '@/lib/utils'
 import ClaimModal from '@/components/claims/ClaimModal'
+import MeetupCoordinator from '@/components/claims/MeetupCoordinator'
 
 export default function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -146,6 +147,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           <Flag size={16} /> Report
         </button>
       </div>
+
+      {/* Meetup Coordinator */}
+      {(post.status === 'claimed' || post.status === 'resolved') && (
+        <MeetupCoordinator postId={post.id as string} />
+      )}
 
       {/* Claim Modal */}
       {showClaimModal && (

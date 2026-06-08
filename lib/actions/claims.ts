@@ -6,14 +6,46 @@ import { MAX_CLAIM_ATTEMPTS, LOCKOUT_HOURS } from '@/lib/constants'
 
 export async function getSecretQuestion(postId: string) {
   const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  const { data } = await supabase
+  const { data: questionData } = await supabase
     .from('secret_questions')
     .select('question')
     .eq('post_id', postId)
-    .single()
+    .maybeSingle()
 
-  return data?.question || null
+  const question = questionData?.question || null
+
+  if (!user) {
+    return { question, attemptsLeft: MAX_CLAIM_ATTEMPTS, isLocked: false, remainingHours: 0 }
+  }
+
+  const { data: claim } = await supabase
+    .from('claims')
+    .select('attempts, locked_until')
+    .eq('post_id', postId)
+    .eq('claimer_id', user.id)
+    .maybeSingle()
+
+  const attempts = claim?.attempts || 0
+  const lockedUntilStr = claim?.locked_until
+
+  let isLocked = false
+  let remainingHours = 0
+
+  if (lockedUntilStr && new Date(lockedUntilStr) > new Date()) {
+    isLocked = true
+    remainingHours = Math.ceil((new Date(lockedUntilStr).getTime() - Date.now()) / 3600000)
+  }
+
+  const attemptsLeft = isLocked ? 0 : Math.max(0, MAX_CLAIM_ATTEMPTS - attempts)
+
+  return {
+    question,
+    attemptsLeft,
+    isLocked,
+    remainingHours,
+  }
 }
 
 export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
@@ -27,7 +59,7 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
     .select('id, attempts, locked_until, status')
     .eq('post_id', postId)
     .eq('claimer_id', user.id)
-    .single()
+    .maybeSingle()
 
   // Block if already approved or rejected
   if (existingClaim?.status === 'approved') {
@@ -42,7 +74,7 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
     const remaining = Math.ceil(
       (new Date(existingClaim.locked_until).getTime() - Date.now()) / 3600000
     )
-    return { error: `Too many failed attempts. Try again in ${remaining} hour${remaining === 1 ? '' : 's'}.` }
+    return { error: `Too many failed attempts. You are locked out. Try again in ${remaining} hour${remaining === 1 ? '' : 's'}.` }
   }
 
   // Fetch the answer hash
@@ -50,7 +82,7 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
     .from('secret_questions')
     .select('answer_hash')
     .eq('post_id', postId)
-    .single()
+    .maybeSingle()
 
   if (!question) return { error: 'Secret question not found.' }
 
@@ -76,14 +108,26 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
 
     // Add strike on lockout
     if (shouldLock) {
-      await supabase.rpc('increment_strikes', { target_user_id: user.id })
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('strikes')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (profile) {
+        const newStrikes = (profile.strikes || 0) + 1
+        await supabase
+          .from('profiles')
+          .update({ strikes: newStrikes })
+          .eq('id', user.id)
+      }
 
       // Notify poster
       const { data: post } = await supabase
         .from('posts')
         .select('user_id, title')
         .eq('id', postId)
-        .single()
+        .maybeSingle()
 
       if (post) {
         await supabase.from('notifications').insert({

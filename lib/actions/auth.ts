@@ -27,7 +27,9 @@ export async function registerUser(formData: {
   })
 
   if (error) return { error: error.message }
-  return { success: 'Check your VIT email inbox for a confirmation link.' }
+
+  // Server-side redirect so cookies/session state is consistent
+  redirect('/verify')
 }
 
 export async function loginUser(formData: {
@@ -41,7 +43,9 @@ export async function loginUser(formData: {
   })
 
   if (error) return { error: error.message }
-  return { success: true }
+
+  // Server-side redirect so Set-Cookie headers are sent correctly
+  redirect('/feed')
 }
 
 export async function logoutUser() {

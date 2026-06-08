@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { CheckCircle, XCircle, Clock, Shield, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 import { getClaimsForUser, approveClaim, rejectClaim } from '@/lib/actions/claims'
@@ -107,17 +108,19 @@ export default function ClaimsPage() {
           </h2>
           <div className="section-stack">
             {resolvedClaims.map((claim) => (
-              <div key={claim.id} className="surface panel" style={{ opacity: 0.74 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <span style={{ fontWeight: 600 }}>{claim.post_title}</span>
-                  <span className={`badge ${claim.status === 'approved' ? 'badge-found' : 'badge-lost'}`}>
-                    {claim.status === 'approved' ? 'Approved' : 'Rejected'}
-                  </span>
+              <Link key={claim.id} href={`/post/${claim.post_id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                <div className="surface panel card-hover" style={{ opacity: 0.9 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{claim.post_title}</span>
+                    <span className={`badge ${claim.status === 'approved' ? 'badge-found' : 'badge-lost'}`}>
+                      {claim.status === 'approved' ? 'Approved' : 'Rejected'}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                    by {claim.claimer_name} - {formatRelativeTime(claim.created_at)}
+                  </p>
                 </div>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                  by {claim.claimer_name} - {formatRelativeTime(claim.created_at)}
-                </p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

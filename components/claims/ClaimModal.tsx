@@ -23,8 +23,14 @@ export default function ClaimModal({ postId, postType, onClose }: ClaimModalProp
 
   useEffect(() => {
     async function loadQuestion() {
-      const q = await getSecretQuestion(postId)
-      setQuestion(q || 'Loading...')
+      const result = await getSecretQuestion(postId)
+      setQuestion(result?.question || 'Loading...')
+      if (result?.attemptsLeft !== undefined) {
+        setAttemptsLeft(result.attemptsLeft)
+      }
+      if (result?.isLocked) {
+        setStep('locked')
+      }
     }
     loadQuestion()
   }, [postId])
@@ -38,6 +44,7 @@ export default function ClaimModal({ postId, postType, onClose }: ClaimModalProp
     if (result.error) {
       if (result.error.includes('locked out')) {
         setStep('locked')
+        setAttemptsLeft(0)
       } else {
         setError(result.error)
         if (result.attemptsLeft !== undefined) setAttemptsLeft(result.attemptsLeft)

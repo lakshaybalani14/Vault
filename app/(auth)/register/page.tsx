@@ -2,12 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
 import { registerUser } from '@/lib/actions/auth'
 
 export default function RegisterPage() {
-  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,12 +32,11 @@ export default function RegisterPage() {
     }
 
     const result = await registerUser({ name, email, password })
-    if (result.error) {
+    if (result?.error) {
       setError(result.error)
       setLoading(false)
-    } else {
-      router.push('/verify')
     }
+    // On success, registerUser redirects server-side to /verify
   }
 
   return (
@@ -54,14 +51,17 @@ export default function RegisterPage() {
       <div className="animate-slide-up" style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h1 style={{
-            fontSize: '2rem',
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-            color: 'var(--text-primary)',
-          }}>
-            Vault
-          </h1>
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <h1 style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+            }}>
+              Vault
+            </h1>
+          </Link>
           <p style={{
             fontSize: '0.875rem',
             color: 'var(--text-secondary)',
