@@ -31,6 +31,7 @@ export default function Navbar({ userName = 'User', userEmail = '', unreadCount 
     { label: 'Feed', href: '/feed' },
     { label: 'Post Item', href: '/post/new' },
     { label: 'Claims', href: '/claims' },
+    { label: 'Users', href: '/users' },
   ]
 
   const [showDropdown, setShowDropdown] = useState(false)
@@ -300,11 +301,12 @@ export default function Navbar({ userName = 'User', userEmail = '', unreadCount 
               openMenuButtonColor="var(--accent)"
               displaySocials={false}
               circleButton
-              themeToggle={<MobileThemeToggle />}
+              themeToggle={<MobileMenuFooter />}
               items={[
                 { label: 'Feed', ariaLabel: 'Feed', link: '/feed' },
                 { label: 'Post Item', ariaLabel: 'Post Item', link: '/post/new' },
                 { label: 'Claims', ariaLabel: 'Claims', link: '/claims' },
+                { label: 'Users', ariaLabel: 'Users', link: '/users' },
                 { label: 'Notifications', ariaLabel: 'Notifications', link: '/notifications' },
                 { label: 'Profile', ariaLabel: 'Profile', link: '/profile/me' },
               ]}
@@ -325,74 +327,116 @@ function DropdownItem({ icon, label, onClick, danger }: { icon: React.ReactNode;
   )
 }
 
-function MobileThemeToggle() {
+function MobileMenuFooter() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useStateHook(false)
+  const [loggingOut, setLoggingOut] = useStateHook(false)
   useEffectHook(() => setMounted(true), [])
   const isDark = mounted && resolvedTheme === 'dark'
 
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    await logoutUser()
+  }
+
   return (
-    <div style={{
-      borderTop: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
-      paddingTop: '1.25rem',
-      marginTop: 'auto',
-    }}>
-      {/* Editorial two-option toggle — matches staggered menu typographic style */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+    <div style={{ marginTop: 'auto' }}>
+      {/* Theme toggle */}
+      <div style={{
+        borderTop: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
+        paddingTop: '1.25rem',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+          <button
+            onClick={() => setTheme('light')}
+            aria-label="Switch to light mode"
+            disabled={!mounted}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
+              letterSpacing: '-1.5px',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+              color: !isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
+              transition: 'color 0.25s ease, opacity 0.25s ease',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Light
+          </button>
+
+          <span style={{
+            fontWeight: 300,
+            fontSize: '1.1rem',
+            color: 'color-mix(in srgb, var(--text-primary) 20%, transparent)',
+            lineHeight: 1,
+            userSelect: 'none',
+          }}>
+            /
+          </span>
+
+          <button
+            onClick={() => setTheme('dark')}
+            aria-label="Switch to dark mode"
+            disabled={!mounted}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
+              letterSpacing: '-1.5px',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+              color: isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
+              transition: 'color 0.25s ease, opacity 0.25s ease',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Dark
+          </button>
+        </div>
+      </div>
+
+      {/* Sign Out */}
+      <div style={{
+        borderTop: '1px solid color-mix(in srgb, var(--text-primary) 12%, transparent)',
+        paddingTop: '1rem',
+        marginTop: '1.25rem',
+      }}>
         <button
-          onClick={() => setTheme('light')}
-          aria-label="Switch to light mode"
-          disabled={!mounted}
+          onClick={handleLogout}
+          disabled={loggingOut}
+          aria-label="Sign out"
           style={{
             background: 'none',
             border: 'none',
             padding: 0,
-            cursor: 'pointer',
+            cursor: loggingOut ? 'wait' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
             fontWeight: 700,
-            fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
-            letterSpacing: '-1.5px',
+            fontSize: 'clamp(1.2rem, 5.5vw, 1.6rem)',
+            letterSpacing: '-1px',
             textTransform: 'uppercase',
             lineHeight: 1,
-            color: !isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
-            transition: 'color 0.25s ease, opacity 0.25s ease',
+            color: '#f43f5e',
+            opacity: loggingOut ? 0.5 : 1,
+            transition: 'opacity 0.2s ease',
             WebkitTapHighlightColor: 'transparent',
           }}
         >
-          Light
-        </button>
-
-        <span style={{
-          fontWeight: 300,
-          fontSize: '1.1rem',
-          color: 'color-mix(in srgb, var(--text-primary) 20%, transparent)',
-          lineHeight: 1,
-          userSelect: 'none',
-        }}>
-          /
-        </span>
-
-        <button
-          onClick={() => setTheme('dark')}
-          aria-label="Switch to dark mode"
-          disabled={!mounted}
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            fontWeight: 700,
-            fontSize: 'clamp(1.4rem, 7vw, 1.9rem)',
-            letterSpacing: '-1.5px',
-            textTransform: 'uppercase',
-            lineHeight: 1,
-            color: isDark ? 'var(--sm-accent, var(--accent))' : 'color-mix(in srgb, var(--text-primary) 28%, transparent)',
-            transition: 'color 0.25s ease, opacity 0.25s ease',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          Dark
+          <LogOut size={20} strokeWidth={2.5} />
+          {loggingOut ? 'Signing out...' : 'Sign Out'}
         </button>
       </div>
     </div>
   )
 }
+

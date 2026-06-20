@@ -51,7 +51,7 @@ export async function loginUser(formData: {
 export async function logoutUser() {
   const supabase = await createServerClient()
   await supabase.auth.signOut()
-  redirect('/login')
+  redirect('/')
 }
 
 export async function getCurrentUser() {

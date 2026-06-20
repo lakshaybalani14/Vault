@@ -15,7 +15,8 @@ export type NotificationType =
   | 'meetup_confirmed'
   | 'post_expiring'
   | 'new_rating'
-  | 'system';
+  | 'system'
+  | 'new_follower';
 export type ReportReason = 'spam' | 'false_claim' | 'inappropriate' | 'already_resolved' | 'other';
 export type ItemCategory =
   | 'Electronics'

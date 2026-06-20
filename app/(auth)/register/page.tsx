@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Eye, EyeOff, UserPlus } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, UserPlus } from 'lucide-react'
 import { registerUser } from '@/lib/actions/auth'
 
 export default function RegisterPage() {
@@ -47,7 +47,24 @@ export default function RegisterPage() {
       justifyContent: 'center',
       padding: 16,
       backgroundColor: 'var(--background)',
+      position: 'relative',
     }}>
+      {/* Back Button */}
+      <Link 
+        href="/" 
+        className="btn btn-ghost btn-sm"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 24,
+          color: 'var(--text-secondary)',
+          textDecoration: 'none'
+        }}
+      >
+        <ArrowLeft size={16} />
+        Back
+      </Link>
+
       <div className="animate-slide-up" style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>

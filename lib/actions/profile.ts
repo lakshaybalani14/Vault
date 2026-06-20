@@ -182,5 +182,23 @@ export async function toggleFollowProfile(targetProfileId: string) {
     .insert({ follower_id: user.id, following_id: targetProfileId })
 
   if (error) return { error: error.message }
+
+  // Send a 'new_follower' notification to the followed user
+  const { data: followerProfile } = await supabase
+    .from('profiles')
+    .select('name')
+    .eq('id', user.id)
+    .single()
+
+  const followerName = followerProfile?.name || 'Someone'
+
+  await supabase.from('notifications').insert({
+    user_id: targetProfileId,
+    type: 'new_follower',
+    title: 'New Follower',
+    body: `${followerName} started following you.`,
+    link: `/profile/${user.id}`,
+  })
+
   return { success: true, following: true }
 }

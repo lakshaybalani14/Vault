@@ -75,9 +75,25 @@ export default async function HomePage() {
   const galleryImages = activeDbImages.length >= 5 ? activeDbImages : FALLBACK_GALLERY_IMAGES
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflowX: 'hidden' }}>
+    <div className="landing-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflowX: 'hidden', zIndex: 0 }}>
       {/* CSS Stylesheet Injector for advanced animations and responsive layouts */}
       <style dangerouslySetInnerHTML={{ __html: `
+        .landing-wrapper::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+          background-repeat: repeat;
+          opacity: 0.8;
+          mix-blend-mode: multiply;
+          z-index: -1;
+          pointer-events: none;
+        }
+        .dark .landing-wrapper::before {
+          filter: invert(1);
+          opacity: 0.3;
+          mix-blend-mode: screen;
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-10px) rotate(1deg); }

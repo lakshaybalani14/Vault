@@ -1,10 +1,18 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
 import Plasma from '@/components/shared/Plasma'
 
 export default function DarkModeBackground() {
+  const [mounted, setMounted] = useState(false)
   const { resolvedTheme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
   if (resolvedTheme !== 'dark') return null
 
   return (
@@ -13,3 +21,4 @@ export default function DarkModeBackground() {
     </div>
   )
 }
+

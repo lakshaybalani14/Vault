@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, LogIn } from 'lucide-react'
 import { loginUser } from '@/lib/actions/auth'
 
 export default function LoginPage() {
@@ -35,7 +35,24 @@ export default function LoginPage() {
       justifyContent: 'center',
       padding: 16,
       backgroundColor: 'var(--background)',
+      position: 'relative',
     }}>
+      {/* Back Button */}
+      <Link 
+        href="/" 
+        className="btn btn-ghost btn-sm"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 24,
+          color: 'var(--text-secondary)',
+          textDecoration: 'none'
+        }}
+      >
+        <ArrowLeft size={16} />
+        Back
+      </Link>
+
       <div className="animate-slide-up" style={{
         width: '100%',
         maxWidth: 420,
