@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
-import Plasma from '@/components/shared/Plasma'
+import Plasma from '@/components/shared/ui/Plasma'
 
 export default function DarkModeBackground() {
   const [mounted, setMounted] = useState(false)

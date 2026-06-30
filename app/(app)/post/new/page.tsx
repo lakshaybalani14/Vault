@@ -8,7 +8,7 @@ import { createPost } from '@/lib/actions/posts'
 import { CATEGORIES, CAMPUS_LOCATIONS, QUESTION_TEMPLATES } from '@/lib/constants'
 import { getCategoryEmoji } from '@/lib/utils'
 import ImageUploader from '@/components/posts/ImageUploader'
-import Stepper, { Step } from '@/components/shared/Stepper'
+import Stepper, { Step } from '@/components/shared/ui/Stepper'
 
 type PostType = 'lost' | 'found'
 

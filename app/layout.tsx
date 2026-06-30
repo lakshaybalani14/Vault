@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/components/shared/ThemeProvider";
-import DarkModeBackground from "@/components/shared/DarkModeBackground";
+import { ThemeProvider } from "@/components/shared/ui/ThemeProvider";
+import DarkModeBackground from "@/components/shared/ui/DarkModeBackground";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import BlurText from '@/components/shared/BlurText'
+import BlurText from '@/components/shared/landing/BlurText'
 import { getFeedPosts } from '@/lib/actions/posts'
-import DomeGallery from '@/components/shared/DomeGalleryWrapper'
-import ScrollReveal from '@/components/shared/ScrollRevealWrapper'
-import WelcomeModal from '@/components/shared/WelcomeModalWrapper'
+import DomeGallery from '@/components/shared/landing/DomeGalleryWrapper'
+import ScrollReveal from '@/components/shared/landing/ScrollRevealWrapper'
+import WelcomeModal from '@/components/shared/landing/WelcomeModalWrapper'
 
 export const metadata = {
   title: 'Vault — Lost & Found for VIT Vellore',
