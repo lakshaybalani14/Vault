@@ -1,30 +1,33 @@
-# Vault
+# Vault Core
 
-Vault is a modern, secure, and intuitive "Lost & Found" platform built exclusively for students at VIT Vellore. It simplifies the process of finding lost items, coordinating secure meetups, and building trust within the campus community.
+Vault is a high-performance, strictly-typed "Lost & Found" platform engineered for the VIT Vellore campus network. Built on a modern serverless architecture, it enforces strict domain-based authentication, implements secure state-driven meetup coordination, and leverages hardware-accelerated animations for a premium user experience.
 
-## ✨ Key Features
+## ⚡ Architecture & Tech Stack
 
-- **VIT Student Verification**: Secure authentication restricting access solely to verified `@vitstudent.ac.in` and `@vit.ac.in` email addresses.
-- **Smart Categorization**: Quickly post or search for lost and found items (Electronics, IDs, Keys, Books, etc.).
-- **Meetup Coordinator**: Securely propose and accept meetup times and on-campus locations without exposing personal phone numbers.
-- **Trust System**: A gamified profile system that tracks "Items Found" to highlight trustworthy and helpful students.
-- **Premium UI/UX**: A highly polished, responsive interface with dark mode support, smooth GSAP scroll animations, and fluid Framer Motion transitions.
+- **Core Framework**: [Next.js 16.2](https://nextjs.org/) (App Router) with **Turbopack** for ultra-fast HMR and optimized production builds.
+- **State & Data Mutations**: Server Actions (`"use server"`) for zero-API-route data mutations and optimistic UI updates.
+- **Authentication**: [Supabase Auth](https://supabase.com/auth) with strict OAuth / Magic Link flows, locked to `@vitstudent.ac.in` and `@vit.ac.in` domains via edge middleware.
+- **Database**: PostgreSQL (via [Supabase](https://supabase.com/database)) utilizing complex **Row Level Security (RLS)** policies to ensure data isolation between users.
+- **Styling Architecture**: **Custom CSS Variables Design System** (No Tailwind). We engineered a bespoke, dependency-free CSS architecture utilizing `color-mix()` for dynamic theme generation, resulting in a lighter DOM and zero utility-class bloat.
+- **Animation Engine**: 
+  - **[GSAP (GreenSock)](https://gsap.com/)**: Handling complex scroll-linked timelines, scrub interpolations, and staggered layout reveals.
+  - **[Framer Motion](https://motion.dev/)**: Managing physics-based spring animations, layout transitions, and `AnimatePresence` unmounting.
+- **Deployment**: [Vercel](https://vercel.com/) Edge Network.
 
-## 🛠️ Tech Stack
+## 🔧 Technical Features
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Styling**: Vanilla CSS (CSS Variables) with a custom design system
-- **Animations**: [Framer Motion](https://motion.dev/) & [GSAP](https://gsap.com/)
-- **Backend & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Row Level Security, Supabase Auth)
-- **Deployment**: [Vercel](https://vercel.com/)
+- **Domain-Restricted Auth Gateway**: Edge-computed middleware intercepts unauthorized domains before hitting the main thread.
+- **Zero-Trust Meetup Coordinator**: A state-machine-driven meetup system allowing students to securely propose, negotiate, and finalize on-campus handoffs without exchanging PII (Personally Identifiable Information).
+- **Gamified Trust Heuristics**: Asynchronous triggers update a relational `profiles` table to calculate user reliability scores based on verified item returns.
+- **Hardware-Accelerated UI**: CSS utilizes `will-change: transform` and `translate3d` to offload paint operations to the GPU, ensuring buttery 60fps scrolling and hover states.
 
-## 🚀 Getting Started
+## 🚀 Local Development Environment
 
 ### Prerequisites
-- Node.js 18+
-- A Supabase project
+- Node.js 18.17+
+- A configured Supabase project instance
 
-### Installation
+### Setup Protocol
 
 1. **Clone the repository**
    ```bash
@@ -37,8 +40,8 @@ Vault is a modern, secure, and intuitive "Lost & Found" platform built exclusive
    npm install
    ```
 
-3. **Configure Environment Variables**
-   Create a `.env.local` file in the `vault-app` directory with your Supabase credentials:
+3. **Environment Injection**
+   Create a `.env.local` file in the `vault-app` directory and inject your Supabase credentials:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
@@ -47,22 +50,22 @@ Vault is a modern, secure, and intuitive "Lost & Found" platform built exclusive
    NEXT_PUBLIC_ALLOWED_EMAIL_DOMAINS=vitstudent.ac.in,vit.ac.in
    ```
 
-4. **Run the Development Server**
+4. **Initialize Turbopack Server**
    ```bash
    npm run dev
    ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+   The application will mount at [http://localhost:3000](http://localhost:3000).
 
-## 📂 Project Structure
+## 📂 System Topology
 
-- `/app`: Next.js App Router pages and layouts.
+- `/app`: Next.js App Router tree (Server Components, Layouts, Loading Boundaries).
 - `/components`:
-  - `/shared/ui`: Reusable UI primitives (Buttons, Modals, Steppers).
-  - `/shared/landing`: Complex animation components for the marketing page.
-  - `/[feature]`: Feature-specific components (e.g., `posts`, `claims`, `analytics`).
-- `/lib`: Utility functions, Supabase client configurations, and server actions.
-- `../docs`: Detailed documentation for database schemas, deployment, and architecture.
+  - `/shared/ui`: Reusable, atomic UI primitives (`Stepper`, `Plasma` backgrounds).
+  - `/shared/landing`: Heavy, client-side animation wrappers (`ScrollReveal`, `DomeGallery`).
+  - `/[feature]`: Domain-specific modular components (`posts`, `claims`, `analytics`).
+- `/lib`: Supabase SSR client factories, Server Actions, and validation schemas.
+- `../docs`: Internal architecture docs, SQL migrations (`follows_migration.sql`), and RLS definitions.
 
-## 📝 License
+## 📝 License & Attribution
 
-Designed and developed by Lakshay Balani for the VIT community.
+Architected and developed by Lakshay Balani.
