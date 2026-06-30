@@ -212,9 +212,11 @@ export async function uploadImages(files: File[], postId: string): Promise<strin
     const ext = file.name.split('.').pop() ?? 'jpg'
     const path = `${postId}/${crypto.randomUUID()}.${ext}`
 
+    const buffer = await file.arrayBuffer()
+
     const { error } = await supabase.storage
       .from('post-images')
-      .upload(path, file, {
+      .upload(path, buffer, {
         cacheControl: '3600',
         upsert: false,
         contentType: file.type,
