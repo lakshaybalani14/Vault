@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
@@ -27,8 +27,15 @@ export default function NewPostPage() {
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
   const [dateTime, setDateTime] = useState(new Date().toISOString().slice(0, 16))
-  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [images, setImages] = useState<File[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [question, setQuestion] = useState('')
+
+  useEffect(() => {
+    const urls = images.map(file => URL.createObjectURL(file))
+    setPreviewUrls(urls)
+    return () => urls.forEach(url => URL.revokeObjectURL(url))
+  }, [images])
   const [answer, setAnswer] = useState('')
   const [isAnonymous, setIsAnonymous] = useState(false)
 
@@ -55,17 +62,18 @@ export default function NewPostPage() {
     if (!postType || loading) return
     setLoading(true)
 
-    const result = await createPost({
-      type: postType,
-      title,
-      description,
-      category,
-      found_at: location,
-      is_anonymous: isAnonymous,
-      question,
-      answer,
-      image_urls: imageUrls,
-    })
+    const formData = new FormData()
+    formData.append('type', postType)
+    formData.append('title', title)
+    formData.append('description', description)
+    formData.append('category', category)
+    formData.append('found_at', location)
+    formData.append('is_anonymous', String(isAnonymous))
+    formData.append('question', question)
+    formData.append('answer', answer)
+    images.forEach(image => formData.append('images', image))
+
+    const result = await createPost(formData)
 
     if (result.error) {
       toast.error(result.error)
@@ -170,7 +178,7 @@ export default function NewPostPage() {
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 20 }}>
                   Upload up to 3 images. Photos help identify items faster.
                 </p>
-                <ImageUploader imageUrls={imageUrls} onImagesChange={setImageUrls} />
+                <ImageUploader images={images} onImagesChange={setImages} />
               </Step>
 
               <Step>
@@ -222,9 +230,9 @@ export default function NewPostPage() {
                     {isAnonymous && <span className="badge badge-category">Anonymous</span>}
                   </div>
 
-                  {imageUrls.length > 0 && (
+                  {previewUrls.length > 0 && (
                     <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto' }}>
-                      {imageUrls.map((url, i) => (
+                      {previewUrls.map((url, i) => (
                         <img key={i} src={url} alt={`Item ${i + 1}`} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
                       ))}
                     </div>

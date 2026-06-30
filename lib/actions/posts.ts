@@ -4,33 +4,33 @@ import { createServerClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import type { Post } from '@/types/database.types'
 
-export async function createPost(data: {
-  type: 'lost' | 'found'
-  title: string
-  description: string
-  category: string
-  found_at: string
-  is_anonymous: boolean
-  question: string
-  answer: string
-  image_urls: string[]
-}) {
+export async function createPost(formData: FormData) {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
+
+  const type = formData.get('type') as 'lost' | 'found'
+  const title = formData.get('title') as string
+  const description = formData.get('description') as string
+  const category = formData.get('category') as string
+  const found_at = formData.get('found_at') as string
+  const is_anonymous = formData.get('is_anonymous') === 'true'
+  const question = formData.get('question') as string
+  const answer = formData.get('answer') as string
+  const images = formData.getAll('images') as File[]
 
   // Create the post
   const { data: post, error: postError } = await supabase
     .from('posts')
     .insert({
       user_id: user.id,
-      type: data.type,
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      found_at: data.found_at,
-      is_anonymous: data.is_anonymous,
-      image_urls: data.image_urls,
+      type,
+      title,
+      description,
+      category,
+      found_at,
+      is_anonymous,
+      image_urls: [],
     })
     .select()
     .single()
@@ -38,14 +38,14 @@ export async function createPost(data: {
   if (postError) return { error: postError.message }
 
   // Hash and save the secret question
-  const normalized = data.answer.trim().toLowerCase()
+  const normalized = answer.trim().toLowerCase()
   const answer_hash = await bcrypt.hash(normalized, 10)
 
   const { error: questionError } = await supabase
     .from('secret_questions')
     .insert({
       post_id: post.id,
-      question: data.question,
+      question,
       answer_hash,
     })
 
@@ -53,6 +53,15 @@ export async function createPost(data: {
     // Clean up the post if question insert fails
     await supabase.from('posts').delete().eq('id', post.id)
     return { error: questionError.message }
+  }
+
+  if (images.length > 0) {
+    try {
+      const urls = await uploadImages(images, post.id)
+      await supabase.from('posts').update({ image_urls: urls }).eq('id', post.id)
+    } catch (e) {
+      console.error('Failed to upload images:', e)
+    }
   }
 
   return { success: true, postId: post.id }

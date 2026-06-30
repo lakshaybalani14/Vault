@@ -3,24 +3,16 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Camera, Images, Upload, X, ImageIcon } from 'lucide-react'
+import imageCompression from 'browser-image-compression'
 import { MAX_IMAGES } from '@/lib/constants'
 
 interface ImageUploaderProps {
-  imageUrls: string[]
-  onImagesChange: (urls: string[]) => void
+  images: File[]
+  onImagesChange: (files: File[]) => void
 }
 
-function readFileAsDataURL(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-
-export default function ImageUploader({ imageUrls, onImagesChange }: ImageUploaderProps) {
-  const [previews, setPreviews] = useState<string[]>(imageUrls)
+export default function ImageUploader({ images, onImagesChange }: ImageUploaderProps) {
+  const [previews, setPreviews] = useState<string[]>([])
   const [isMobile, setIsMobile] = useState(false)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const galleryInputRef = useRef<HTMLInputElement>(null)
@@ -34,23 +26,38 @@ export default function ImageUploader({ imageUrls, onImagesChange }: ImageUpload
     return () => window.removeEventListener('resize', check)
   }, [])
 
+  // Generate previews from File objects
+  useEffect(() => {
+    const urls = images.map(file => URL.createObjectURL(file))
+    setPreviews(urls)
+    return () => urls.forEach(url => URL.revokeObjectURL(url))
+  }, [images])
+
   const addFiles = useCallback(async (files: File[]) => {
-    const remaining = MAX_IMAGES - previews.length
+    const remaining = MAX_IMAGES - images.length
     const filesToAdd = files.slice(0, remaining)
-    const results = await Promise.all(filesToAdd.map(readFileAsDataURL))
-    setPreviews(prev => {
-      const updated = [...prev, ...results].slice(0, MAX_IMAGES)
-      onImagesChange(updated)
-      return updated
-    })
-  }, [previews.length, onImagesChange])
+    
+    const compressedFiles = await Promise.all(
+      filesToAdd.map(async (file) => {
+        try {
+          return await imageCompression(file, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
+          })
+        } catch (error) {
+          console.error('Image compression failed:', error)
+          return file // Fallback to original
+        }
+      })
+    )
+    
+    onImagesChange([...images, ...compressedFiles].slice(0, MAX_IMAGES))
+  }, [images, onImagesChange])
 
   const removeImage = (index: number) => {
-    setPreviews(prev => {
-      const updated = prev.filter((_, i) => i !== index)
-      onImagesChange(updated)
-      return updated
-    })
+    const updated = images.filter((_, i) => i !== index)
+    onImagesChange(updated)
   }
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,12 +70,12 @@ export default function ImageUploader({ imageUrls, onImagesChange }: ImageUpload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: addFiles,
     accept: { 'image/*': ['.jpg', '.jpeg', '.png', '.webp'] },
-    maxFiles: MAX_IMAGES - previews.length,
-    disabled: previews.length >= MAX_IMAGES,
+    maxFiles: MAX_IMAGES - images.length,
+    disabled: images.length >= MAX_IMAGES,
   })
 
-  const canAdd = previews.length < MAX_IMAGES
-  const remaining = MAX_IMAGES - previews.length
+  const canAdd = images.length < MAX_IMAGES
+  const remaining = MAX_IMAGES - images.length
 
   return (
     <div>
