@@ -64,10 +64,10 @@
   --resolved: #9ca3af;
   --resolved-bg: rgba(156, 163, 175, 0.1);
 
-  --shadow-sm: 0 6px 18px rgba(1, 7, 20, 0.45);
-  --shadow-md: 0 14px 34px rgba(1, 7, 20, 0.52);
-  --shadow-lg: 0 24px 54px rgba(1, 7, 20, 0.62);
-  --shadow-glow: 0 0 24px rgba(61, 214, 255, 0.38);
+  --shadow-sm: 0 2px 8px rgba(1, 7, 20, 0.45);
+  --shadow-md: 0 8px 26px rgba(1, 7, 20, 0.52);
+  --shadow-lg: 0 18px 40px rgba(1, 7, 20, 0.62);
+  --shadow-glow: 0 0 22px rgba(61, 214, 255, 0.38);
 }
 
 * {
@@ -87,16 +87,25 @@ html {
 body {
   font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--background);
-  background-image:
-    radial-gradient(1200px circle at 10% -20%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 58%),
-    radial-gradient(1000px circle at 90% -10%, color-mix(in srgb, var(--found) 12%, transparent), transparent 56%),
-    linear-gradient(180deg, var(--background) 0%, var(--background-elevated) 100%);
-  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.6;
   transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-overflow-scrolling: touch;
   text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(1200px circle at 10% -20%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 58%),
+    radial-gradient(1000px circle at 90% -10%, color-mix(in srgb, var(--found) 12%, transparent), transparent 56%),
+    linear-gradient(180deg, var(--background) 0%, var(--background-elevated) 100%);
+  pointer-events: none;
+  /* Hardware acceleration for the fixed background layer */
+  transform: translateZ(0);
 }
 
 .plasma-bg-layer {
