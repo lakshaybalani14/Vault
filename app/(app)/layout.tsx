@@ -31,6 +31,7 @@ export default async function AppLayout({
       <Navbar
         userName={user?.name || 'User'}
         userEmail={user?.email || ''}
+        userAvatar={user?.avatar_url || null}
         unreadCount={unreadCount}
       />
       <main className="app-main">

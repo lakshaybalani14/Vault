@@ -18,10 +18,11 @@ export type PillNavItem = {
 interface NavbarProps {
   userName?: string
   userEmail?: string
+  userAvatar?: string | null
   unreadCount?: number
 }
 
-export default function Navbar({ userName = 'User', userEmail = '', unreadCount = 0 }: NavbarProps) {
+export default function Navbar({ userName = 'User', userEmail = '', userAvatar = null, unreadCount = 0 }: NavbarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { theme, setTheme } = useTheme()
@@ -267,7 +268,11 @@ export default function Navbar({ userName = 'User', userEmail = '', unreadCount 
 
             <div ref={dropdownRef} style={{ position: 'relative' }}>
               <button onClick={() => setShowDropdown((prev) => !prev)} className="profile-trigger" aria-haspopup="menu" aria-expanded={showDropdown}>
-                <span className="avatar">{initials}</span>
+                {userAvatar ? (
+                  <img src={userAvatar} alt={userName} className="avatar" style={{ objectFit: 'cover' }} />
+                ) : (
+                  <span className="avatar">{initials}</span>
+                )}
                 <span className="avatar-name">{userName.split(' ')[0]}</span>
               </button>
 
