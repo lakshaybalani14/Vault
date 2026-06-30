@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { createPost } from '@/lib/actions/posts'
-import { CATEGORIES, CAMPUS_LOCATIONS, QUESTION_TEMPLATES } from '@/lib/constants'
+import { CATEGORIES, CAMPUS_LOCATIONS_GROUPED, QUESTION_TEMPLATES } from '@/lib/constants'
 import { getCategoryEmoji } from '@/lib/utils'
 import ImageUploader from '@/components/posts/ImageUploader'
 import Stepper, { Step } from '@/components/shared/ui/Stepper'
@@ -162,8 +162,12 @@ export default function NewPostPage() {
                   <label htmlFor="location">Where on campus?</label>
                   <select id="location" className="input" value={location} onChange={(e) => setLocation(e.target.value)}>
                     <option value="">Select a location...</option>
-                    {CAMPUS_LOCATIONS.map((loc) => (
-                      <option key={loc} value={loc}>{loc}</option>
+                    {CAMPUS_LOCATIONS_GROUPED.map((group) => (
+                      <optgroup key={group.category} label={group.category}>
+                        {group.locations.map((loc) => (
+                          <option key={loc} value={loc}>{loc}</option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>

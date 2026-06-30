@@ -2,33 +2,49 @@
 // Vault — Application Constants
 // ============================================================
 
-export const CAMPUS_LOCATIONS = [
-  "Main Gate",
-  "SJT Block",
-  "MB Block",
-  "GDN Block",
-  "SMV Block",
-  "TT Auditorium",
-  "Central Library",
-  "Cafeteria (Main)",
-  "Cafeteria (North)",
-  "Men's Hostel (A-Block)",
-  "Men's Hostel (B-Block)",
-  "Men's Hostel (C-Block)",
-  "Women's Hostel",
-  "Sports Complex",
-  "Swimming Pool",
-  "Biotech Block",
-  "Mechanical Block",
-  "Civil Block",
-  "Technology Tower",
-  "Admin Block",
-  "Health Centre",
-  "Parking Area (SJT)",
-  "Parking Area (MB)",
-  "VIT Post Office",
-  "Other (specify in description)",
+export const CAMPUS_LOCATIONS_GROUPED = [
+  {
+    category: "Academic Buildings",
+    locations: [
+      "SJT", "TT", "PRP", "MB", "SMV", "GDN", "CDMM", "Architecture Block"
+    ]
+  },
+  {
+    category: "Men's Hostel",
+    locations: [
+      "MH - A Block", "MH - B Block", "MH - C Block", "MH - D Block", 
+      "MH - E Block", "MH - F Block", "MH - G Block", "MH - H Block", 
+      "MH - J Block", "MH - K Block", "MH - L Block", "MH - M Block", 
+      "MH - N Block", "MH - O Block", "MH - P Block", "MH - Q Block", 
+      "MH - R Block", "MH - T Block", 
+      "One Food World", "Enzo", "Bakewell", "Men's Swimming Pool", 
+      "RGMart", "Men's Gym", "Aavin"
+    ]
+  },
+  {
+    category: "Women's Hostel",
+    locations: [
+      "WH - A Block", "WH - B Block", "WH - C Block", "WH - D Block", 
+      "WH - E Block", "WH - F Block", "WH - G Block", "WH - H Block", 
+      "WH - I Block", "WH - J Block", "WH - S Block"
+    ]
+  },
+  {
+    category: "Others",
+    locations: [
+      "DC Bakery", "Dominos", "Amazon Depot", "PRP Food Court", 
+      "Foodys", "Amul", "TT Basketball Ground", "Anna Audi", 
+      "CS Hall", "MB Tennis Ground", "GDN Canteen", "All Mart", 
+      "Main Gate", "Volleyball Court", "Greenos", "Woodys", 
+      "Sales Room", "SMV Pathway", "PRP Pathway", "Balaji", 
+      "FC", "Gate 3A", "Gate 2A", "Parking Area", "Hospital", 
+      "Gate 1A", "Flag Spot", "Lassi Zone", "Central Library", 
+      "SJT Pathway", "Other (Specify in description)"
+    ]
+  }
 ] as const;
+
+export const CAMPUS_LOCATIONS = CAMPUS_LOCATIONS_GROUPED.flatMap(g => g.locations);
 
 export const CATEGORIES = [
   { value: 'Electronics', emoji: '🎧', label: 'Electronics' },
