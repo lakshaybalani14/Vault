@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vault
 
-## Getting Started
+Vault is a modern, secure, and intuitive "Lost & Found" platform built exclusively for students at VIT Vellore. It simplifies the process of finding lost items, coordinating secure meetups, and building trust within the campus community.
 
-First, run the development server:
+## ✨ Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **VIT Student Verification**: Secure authentication restricting access solely to verified `@vitstudent.ac.in` and `@vit.ac.in` email addresses.
+- **Smart Categorization**: Quickly post or search for lost and found items (Electronics, IDs, Keys, Books, etc.).
+- **Meetup Coordinator**: Securely propose and accept meetup times and on-campus locations without exposing personal phone numbers.
+- **Trust System**: A gamified profile system that tracks "Items Found" to highlight trustworthy and helpful students.
+- **Premium UI/UX**: A highly polished, responsive interface with dark mode support, smooth GSAP scroll animations, and fluid Framer Motion transitions.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Styling**: Vanilla CSS (CSS Variables) with a custom design system
+- **Animations**: [Framer Motion](https://motion.dev/) & [GSAP](https://gsap.com/)
+- **Backend & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Row Level Security, Supabase Auth)
+- **Deployment**: [Vercel](https://vercel.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
+- Node.js 18+
+- A Supabase project
 
-To learn more about Next.js, take a look at the following resources:
+### Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/lakshaybalani14/Vault.git
+   cd Vault/vault-app
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## Deploy on Vercel
+3. **Configure Environment Variables**
+   Create a `.env.local` file in the `vault-app` directory with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NEXT_PUBLIC_ALLOWED_EMAIL_DOMAINS=vitstudent.ac.in,vit.ac.in
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📂 Project Structure
+
+- `/app`: Next.js App Router pages and layouts.
+- `/components`:
+  - `/shared/ui`: Reusable UI primitives (Buttons, Modals, Steppers).
+  - `/shared/landing`: Complex animation components for the marketing page.
+  - `/[feature]`: Feature-specific components (e.g., `posts`, `claims`, `analytics`).
+- `/lib`: Utility functions, Supabase client configurations, and server actions.
+- `../docs`: Detailed documentation for database schemas, deployment, and architecture.
+
+## 📝 License
+
+Designed and developed by Lakshay Balani for the VIT community.
