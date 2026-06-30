@@ -15,7 +15,7 @@ export const CAMPUS_LOCATIONS_GROUPED = [
       "MH - A Block", "MH - B Block", "MH - C Block", "MH - D Block", 
       "MH - E Block", "MH - F Block", "MH - G Block", "MH - H Block", 
       "MH - J Block", "MH - K Block", "MH - L Block", "MH - M Block", 
-      "MH - N Block", "MH - O Block", "MH - P Block", "MH - Q Block", 
+      "MH - N Block", "MH - P Block", "MH - Q Block", 
       "MH - R Block", "MH - T Block", 
       "One Food World", "Enzo", "Bakewell", "Men's Swimming Pool", 
       "RGMart", "Men's Gym", "Aavin"
