@@ -3,6 +3,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import { MAX_CLAIM_ATTEMPTS, LOCKOUT_HOURS } from '@/lib/constants'
+import { normalizeAnswer } from '@/lib/utils'
 
 export async function getSecretQuestion(postId: string) {
   const supabase = await createServerClient()
@@ -87,24 +88,29 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
   if (!question) return { error: 'Secret question not found.' }
 
   const isCorrect = await bcrypt.compare(
-    typedAnswer.trim().toLowerCase().replace(/\s+/g, ''),
+    normalizeAnswer(typedAnswer),
     question.answer_hash
   )
 
   if (!isCorrect) {
     const newAttempts = (existingClaim?.attempts ?? 0) + 1
     const shouldLock = newAttempts >= MAX_CLAIM_ATTEMPTS
+    const lockedUntil = shouldLock ? new Date(Date.now() + LOCKOUT_HOURS * 60 * 60 * 1000).toISOString() : null
 
-    // Upsert claim with incremented attempts
-    await supabase.from('claims').upsert({
-      post_id: postId,
-      claimer_id: user.id,
-      attempts: newAttempts,
-      locked_until: shouldLock
-        ? new Date(Date.now() + LOCKOUT_HOURS * 60 * 60 * 1000).toISOString()
-        : null,
-      status: 'pending',
-    }, { onConflict: 'post_id,claimer_id' })
+    if (existingClaim) {
+      await supabase.from('claims').update({
+        attempts: newAttempts,
+        locked_until: lockedUntil,
+      }).eq('id', existingClaim.id)
+    } else {
+      await supabase.from('claims').insert({
+        post_id: postId,
+        claimer_id: user.id,
+        attempts: newAttempts,
+        locked_until: lockedUntil,
+        status: 'pending',
+      })
+    }
 
     // Add strike on lockout
     if (shouldLock) {
@@ -157,15 +163,29 @@ export async function submitClaim(postId: string, message: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
-  // Save the claim with message
-  const { error } = await supabase.from('claims').upsert({
-    post_id: postId,
-    claimer_id: user.id,
-    message,
-    status: 'pending',
-  }, { onConflict: 'post_id,claimer_id' })
+  // Fetch existing claim to avoid buggy upsert without unique constraint
+  const { data: existingClaim } = await supabase
+    .from('claims')
+    .select('id')
+    .eq('post_id', postId)
+    .eq('claimer_id', user.id)
+    .maybeSingle()
 
-  if (error) return { error: error.message }
+  let submitError;
+  if (existingClaim) {
+    const { error } = await supabase.from('claims').update({ message, status: 'pending' }).eq('id', existingClaim.id)
+    submitError = error
+  } else {
+    const { error } = await supabase.from('claims').insert({
+      post_id: postId,
+      claimer_id: user.id,
+      message,
+      status: 'pending',
+    })
+    submitError = error
+  }
+
+  if (submitError) return { error: submitError.message }
 
   // Notify poster
   const { data: post } = await supabase

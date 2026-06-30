@@ -3,6 +3,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import type { Post } from '@/types/database.types'
+import { normalizeAnswer } from '@/lib/utils'
 
 export async function createPost(formData: FormData) {
   const supabase = await createServerClient()
@@ -47,7 +48,7 @@ export async function createPost(formData: FormData) {
   if (postError) return { error: postError.message }
 
   // Hash and save the secret question
-  const normalized = answer.trim().toLowerCase().replace(/\s+/g, '')
+  const normalized = normalizeAnswer(answer)
   const answer_hash = await bcrypt.hash(normalized, 10)
 
   const { error: questionError } = await supabase

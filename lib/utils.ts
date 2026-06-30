@@ -51,3 +51,10 @@ export function getCategoryEmoji(category: string): string {
   }
   return emojiMap[category] || '📦'
 }
+
+export function normalizeAnswer(answer: string): string {
+  return answer
+    .toLowerCase()
+    .replace(/\b(a|an|the)\b/g, '') // Remove articles
+    .replace(/[^a-z0-9]/g, '')      // Remove all non-alphanumeric characters (spaces, punctuation)
+}
