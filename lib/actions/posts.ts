@@ -19,6 +19,15 @@ export async function createPost(formData: FormData) {
   const answer = formData.get('answer') as string
   const images = formData.getAll('images') as File[]
 
+  const image_urls: string[] = []
+  for (const image of images) {
+    if (image.size > 0) {
+      const buffer = await image.arrayBuffer()
+      const base64 = Buffer.from(buffer).toString('base64')
+      image_urls.push(`data:${image.type || 'image/jpeg'};base64,${base64}`)
+    }
+  }
+
   // Create the post
   const { data: post, error: postError } = await supabase
     .from('posts')
@@ -30,7 +39,7 @@ export async function createPost(formData: FormData) {
       category,
       found_at,
       is_anonymous,
-      image_urls: [],
+      image_urls,
     })
     .select()
     .single()
@@ -53,15 +62,6 @@ export async function createPost(formData: FormData) {
     // Clean up the post if question insert fails
     await supabase.from('posts').delete().eq('id', post.id)
     return { error: questionError.message }
-  }
-
-  if (images.length > 0) {
-    try {
-      const urls = await uploadImages(images, post.id)
-      await supabase.from('posts').update({ image_urls: urls }).eq('id', post.id)
-    } catch (e) {
-      console.error('Failed to upload images:', e)
-    }
   }
 
   return { success: true, postId: post.id }
