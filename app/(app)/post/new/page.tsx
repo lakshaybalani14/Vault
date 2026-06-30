@@ -46,7 +46,7 @@ export default function NewPostPage() {
       case 1:
         return Boolean(postType && title.length >= 5 && category)
       case 2:
-        return Boolean(description.length >= 20 && location)
+        return Boolean(description.trim().length > 0 && location)
       case 3:
         return true
       case 4:
@@ -156,7 +156,7 @@ export default function NewPostPage() {
                 <div className="form-group">
                   <label htmlFor="description">Description</label>
                   <textarea id="description" className="input" placeholder="Describe the item - color, size, brand, marks" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} style={{ minHeight: 120 }} />
-                  <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: 4, display: 'block' }}>{description.length}/1000 characters (min 20)</span>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: 4, display: 'block' }}>{description.length}/1000 characters</span>
                 </div>
                 <div className="form-group">
                   <label htmlFor="location">Where on campus?</label>

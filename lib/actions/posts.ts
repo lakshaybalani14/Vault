@@ -47,7 +47,7 @@ export async function createPost(formData: FormData) {
   if (postError) return { error: postError.message }
 
   // Hash and save the secret question
-  const normalized = answer.trim().toLowerCase()
+  const normalized = answer.trim().toLowerCase().replace(/\s+/g, '')
   const answer_hash = await bcrypt.hash(normalized, 10)
 
   const { error: questionError } = await supabase

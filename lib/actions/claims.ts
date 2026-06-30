@@ -87,7 +87,7 @@ export async function verifyClaimAnswer(postId: string, typedAnswer: string) {
   if (!question) return { error: 'Secret question not found.' }
 
   const isCorrect = await bcrypt.compare(
-    typedAnswer.trim().toLowerCase(),
+    typedAnswer.trim().toLowerCase().replace(/\s+/g, ''),
     question.answer_hash
   )
 
