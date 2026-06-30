@@ -73,7 +73,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
             scroller,
             start: 'top bottom',
             end: rotationEnd,
-            scrub: true
+            scrub: 0.6
           }
         }
       );
@@ -92,7 +92,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
             scroller,
             start: 'top bottom-=20%',
             end: wordAnimationEnd,
-            scrub: true
+            scrub: 0.6
           }
         }
       );
@@ -110,7 +110,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
               scroller,
               start: 'top bottom-=20%',
               end: wordAnimationEnd,
-              scrub: true
+              scrub: 0.6
             }
           }
         );

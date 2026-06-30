@@ -8,7 +8,6 @@ import { Bell, ClipboardList, LogOut, Moon, Sun, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { logoutUser } from '@/lib/actions/auth'
 import StaggeredMenu from '@/components/shared/StaggeredMenu'
-import { useEffect as useEffectHook, useState as useStateHook } from 'react'
 
 export type PillNavItem = {
   label: string
@@ -329,9 +328,9 @@ function DropdownItem({ icon, label, onClick, danger }: { icon: React.ReactNode;
 
 function MobileMenuFooter() {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useStateHook(false)
-  const [loggingOut, setLoggingOut] = useStateHook(false)
-  useEffectHook(() => setMounted(true), [])
+  const [mounted, setMounted] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
+  useEffect(() => setMounted(true), [])
   const isDark = mounted && resolvedTheme === 'dark'
 
   const handleLogout = async () => {

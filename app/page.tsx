@@ -5,6 +5,7 @@ import BlurText from '@/components/shared/BlurText'
 import { getFeedPosts } from '@/lib/actions/posts'
 import DomeGallery from '@/components/shared/DomeGalleryWrapper'
 import ScrollReveal from '@/components/shared/ScrollRevealWrapper'
+import WelcomeModal from '@/components/shared/WelcomeModalWrapper'
 
 export const metadata = {
   title: 'Vault — Lost & Found for VIT Vellore',
@@ -76,7 +77,8 @@ export default async function HomePage() {
 
   return (
     <div className="landing-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflowX: 'hidden', zIndex: 0 }}>
-      {/* CSS Stylesheet Injector for advanced animations and responsive layouts */}
+      {/* Welcome Modal for first-time visitors */}
+      <WelcomeModal />
       <style dangerouslySetInnerHTML={{ __html: `
         .landing-wrapper::before {
           content: "";
@@ -339,7 +341,7 @@ export default async function HomePage() {
           >
             <BlurText
               text="To the students,"
-              delay={150}
+              delay={100}
               animateBy="words"
               direction="top"
               as="span"
@@ -347,11 +349,11 @@ export default async function HomePage() {
             />
             <BlurText
               text="for the students."
-              delay={150}
+              delay={100}
               animateBy="words"
               direction="bottom"
               as="span"
-              initialDelay={450}
+              initialDelay={300}
               animateImmediately={true}
               style={{
                 background:
@@ -366,11 +368,11 @@ export default async function HomePage() {
 
           <BlurText
             text="Vault is VIT's custom lost & found network — designed to simplify finding what you lost, coordinate meetups securely, and earn trust."
-            delay={50}
+            delay={40}
             animateBy="words"
             direction="bottom"
             as="p"
-            initialDelay={900}
+            initialDelay={550}
             animateImmediately={true}
             style={{
               fontSize: 'clamp(1rem, 2vw, 1.15rem)',

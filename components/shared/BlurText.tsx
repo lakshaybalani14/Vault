@@ -37,7 +37,7 @@ const buildKeyframes = (
 
 const BlurText: React.FC<BlurTextProps> = ({
   text = '',
-  delay = 200,
+  delay = 120,
   className = '',
   animateBy = 'words',
   direction = 'top',
@@ -47,7 +47,7 @@ const BlurText: React.FC<BlurTextProps> = ({
   animationTo,
   easing = 'easeOut',
   onAnimationComplete,
-  stepDuration = 0.35,
+  stepDuration = 0.3,
   as = 'p',
   style,
   initialDelay = 0,
